@@ -33,9 +33,8 @@ export const registerUser = async (userData) => {
 
 export const loginUser = async (credentials) => {
   try {
-    const response = await axios.post(`${API_BASE}/api/login`, credentials, {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true
+    const response = await api.post('/api/login', credentials, {
+      withCredentials: true // optional if you use cookies
     });
     return response.data;
   } catch (error) {
@@ -207,4 +206,5 @@ export const deleteContact = async (id) => {
     throw error;
   }
 };
+
 
