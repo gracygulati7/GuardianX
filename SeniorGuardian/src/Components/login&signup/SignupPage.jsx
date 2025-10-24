@@ -35,12 +35,12 @@ const SignUpPage = () => {
 		try {
 			const data = await registerUser(formData);
 			if (data && !data.message) {
-				navigate('/login'); // redirect to login after successful signup
+				navigate('/'); // redirect to login after successful signup
 			} else {
 				setErrorMessage(data.message || 'Registration failed');
 			}
 		} catch (error) {
-			setErrorMessage('Error occurred during sign up');
+			setErrorMessage('User already exists');
 			console.error(error);
 		} finally {
 			setLoading(false);
@@ -148,7 +148,7 @@ const SignUpPage = () => {
 				{errorMessage && <p className="error-message">{errorMessage}</p>}
 				<p className="already-account">
 					Already have an account?{' '}
-					<span onClick={() => navigate('/login')} className="login-link">
+					<span onClick={() => navigate('/')} className="login-link">
 						Login
 					</span>
 				</p>
