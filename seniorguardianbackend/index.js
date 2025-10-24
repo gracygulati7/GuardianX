@@ -12,13 +12,25 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(bodyParser.json());
-app.use(
-	cors({
-		origin: 'https://guardianx-iota.vercel.app',
-		methods: ['GET', 'POST', 'PUT', 'DELETE'],
-		allowedHeaders: ['Content-Type', 'Authorization'],
-	})
-);
+// app.use(
+// 	cors({
+// 		origin: 'https://guardianx-iota.vercel.app',
+// 		methods: ['GET', 'POST', 'PUT', 'DELETE'],
+// 		allowedHeaders: ['Content-Type', 'Authorization'],
+// 	})
+// );
+
+const corsOptions = {
+  origin: 'https://guardianx-iota.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
+// Handle preflight OPTIONS requests
+app.options('*', cors(corsOptions));
 
 mongoose
   .connect(process.env.MONGO_URI)
