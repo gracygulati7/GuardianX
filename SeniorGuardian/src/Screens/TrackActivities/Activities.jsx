@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Activities.css";
 import axios from "axios";
+import { API_BASE } from "../../services/apiService";
 
 import med from "../../assets/med.jpg";
 import calorie from "../../assets/calorie.jpg";
@@ -41,27 +42,27 @@ const Activities = () => {
       alert("Please enter activity type, name, and time.");
       return;
     }
-    
+
     const activityData = {
       type: selectedActivity,
       name: activityName,
       time: activityTime,
       reminder,
     };
-  
+
     try {
       if (editId) {
         const response = await axios.put(
-          `http://localhost:3000/api/activities/${editId}`,
+          `${API_BASE}/api/activities/${editId}`,
           activityData
         );
         setActivities(
           activities.map((act) => (act._id === editId ? response.data : act))
         );
-        setEditId(null); 
+        setEditId(null);
       } else {
         const response = await axios.post(
-          "http://localhost:3000/api/activities",
+          `${API_BASE}/api/activities`,
           activityData
         );
         setActivities([...activities, response.data]);
@@ -74,11 +75,11 @@ const Activities = () => {
       console.error("Error adding/updating activity:", error);
       alert("Error adding/updating activity. Please try again.");
     }
-  };  
+  };
 
   const deleteActivity = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/activities/${id}`);
+      await axios.delete(`${API_BASE}/api/activities/${id}`);
       const updatedActivities = activities.filter(
         (activity) => activity._id !== id
       );
@@ -90,17 +91,16 @@ const Activities = () => {
   };
 
   const editActivity = (activity) => {
-    setEditId(activity._id); 
+    setEditId(activity._id);
     setActivityName(activity.name);
-    setActivityTime(activity.time); 
-    setReminder(activity.reminder); 
-    setSelectedActivity(activity.type); 
+    setActivityTime(activity.time);
+    setReminder(activity.reminder);
+    setSelectedActivity(activity.type);
   };
-  
 
   const fetchActivities = async (activityType = "") => {
     try {
-      const response = await axios.get("http://localhost:3000/api/activities", {
+      const response = await axios.get(`${API_BASE}/api/activities`, {
         params: { type: activityType },
       });
       setActivities(response.data);
@@ -109,17 +109,17 @@ const Activities = () => {
     }
   };
 
-  const filteractivitities = () => {
+  const filterActivities = () => {
     if (!startTime || !endTime) {
       alert("Please select both start and end times.");
       return;
     }
 
     const filtered = activities.filter((activity) => {
-      const activityTime = new Date(`2024-11-29T${activity.time}:00`);
+      const activityTimeObj = new Date(`2024-11-29T${activity.time}:00`);
       const start = new Date(`2024-11-29T${startTime}:00`);
       const end = new Date(`2024-11-29T${endTime}:00`);
-      return activityTime >= start && activityTime <= end;
+      return activityTimeObj >= start && activityTimeObj <= end;
     });
 
     setSearchResults(filtered);
@@ -153,73 +153,73 @@ const Activities = () => {
 
       <h3>Search Activities by Time Range</h3>
       <div className="time-filter">
-  <label htmlFor="start-time">Start Time:</label>
-  <input
-    type="time"
-    id="start-time"
-    value={startTime}
-    onChange={(e) => setStartTime(e.target.value)}
-  />
-  
-  <label htmlFor="end-time">End Time:</label>
-  <input
-    type="time"
-    id="end-time"
-    value={endTime}
-    onChange={(e) => setEndTime(e.target.value)}
-  />
-  
-  <button onClick={filteractivitities}>Search</button>
-</div>
+        <label htmlFor="start-time">Start Time:</label>
+        <input
+          type="time"
+          id="start-time"
+          value={startTime}
+          onChange={(e) => setStartTime(e.target.value)}
+        />
 
+        <label htmlFor="end-time">End Time:</label>
+        <input
+          type="time"
+          id="end-time"
+          value={endTime}
+          onChange={(e) => setEndTime(e.target.value)}
+        />
+
+        <button onClick={filterActivities}>Search</button>
+      </div>
 
       {selectedActivity && (
         <div className="activitydesc">
-        <div className="inputtext">
-          <input
-            type="text"
-            placeholder="Activity Name"
-            value={activityName}
-            onChange={(e) => setActivityName(e.target.value)}
-          />
-          <input
-            className="clock"
-            type="time"
-            value={activityTime}
-            onChange={(e) => setActivityTime(e.target.value)}
-          />
-          <label className="clock-label">⏰ Select Time</label>
+          <div className="inputtext">
+            <input
+              type="text"
+              placeholder="Activity Name"
+              value={activityName}
+              onChange={(e) => setActivityName(e.target.value)}
+            />
+            <input
+              className="clock"
+              type="time"
+              value={activityTime}
+              onChange={(e) => setActivityTime(e.target.value)}
+            />
+            <label className="clock-label">⏰ Select Time</label>
+          </div>
+          <button onClick={addOrUpdateActivity}>
+            {editId ? "Update Activity" : "Add Activity"}
+          </button>
         </div>
-        <button onClick={addOrUpdateActivity}>Add Activity</button>
-      </div>      
       )}
 
-<div className="list">
-  {searchResults.length > 0
-    ? searchResults.map((activity) => (
-        <li key={activity._id}>
-          <span>
-            {activity.name} at {activity.time}
-          </span>
-          <div className="button-container">
-            <button onClick={() => editActivity(activity)}>Edit</button>
-            <button onClick={() => deleteActivity(activity._id)}>Delete</button>
-          </div>
-        </li>
-      ))
-    : activities.map((activity) => (
-        <li key={activity._id}>
-          <span>
-            {activity.name} at {activity.time}
-          </span>
-          <div className="button-container">
-            <button onClick={() => editActivity(activity)}>Edit</button>
-            <button onClick={() => deleteActivity(activity._id)}>Delete</button>
-          </div>
-        </li>
-      ))}
-</div>
-
+      <div className="list">
+        {searchResults.length > 0
+          ? searchResults.map((activity) => (
+              <li key={activity._id}>
+                <span>
+                  {activity.name} at {activity.time}
+                </span>
+                <div className="button-container">
+                  <button onClick={() => editActivity(activity)}>Edit</button>
+                  <button onClick={() => deleteActivity(activity._id)}>Delete</button>
+                </div>
+              </li>
+            ))
+          : activities.map((activity) => (
+              <li key={activity._id}>
+                <span>
+                  {activity.name} at {activity.time}
+                </span>
+                <div className="button-container">
+                  <button onClick={() => editActivity(activity)}>Edit</button>
+                  <button onClick={() => deleteActivity(activity._id)}>Delete</button>
+                </div>
+              </li>
+            ))}
+      </div>
     </div>
   );
 };

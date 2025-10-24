@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './HealthStatus.css';
+import { API_BASE } from '../../services/apiService';
 
-axios.defaults.baseURL = 'http://localhost:3000';
+axios.defaults.baseURL = API_BASE;
 
 const HealthStatus = () => {
 	const [formData, setFormData] = useState({

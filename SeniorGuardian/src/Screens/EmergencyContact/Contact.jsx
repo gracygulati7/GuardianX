@@ -8,6 +8,7 @@ import Modal from 'react-modal';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import './Contact.css';
 import axios from 'axios';
+import { API_BASE } from '../../services/apiService'; // import API_BASE
 
 const EmergencyContactManagement = () => {
   const [contacts, setContacts] = useState([]);
@@ -35,7 +36,7 @@ const EmergencyContactManagement = () => {
         if (editContactIndex !== null) {
           const contactToEdit = contacts[editContactIndex];
           const response = await axios.put(
-            `http://localhost:3000/api/contacts/${contactToEdit._id}`,
+            `${API_BASE}/api/contacts/${contactToEdit._id}`,
             values
           );
           const updatedContacts = [...contacts];
@@ -44,7 +45,7 @@ const EmergencyContactManagement = () => {
           toast.success('Emergency contact updated successfully!');
         } else {
           const response = await axios.post(
-            'http://localhost:3000/api/contacts',
+            `${API_BASE}/api/contacts`,
             values
           );
           setContacts([...contacts, response.data]);
@@ -62,7 +63,7 @@ const EmergencyContactManagement = () => {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/contacts');
+        const response = await axios.get(`${API_BASE}/api/contacts`);
         setContacts(response.data);
       } catch (error) {
         console.error('Error fetching contacts:', error.message);
@@ -94,7 +95,7 @@ const EmergencyContactManagement = () => {
   const deleteContact = async index => {
     const contactToDelete = contacts[index];
     try {
-      await axios.delete(`http://localhost:3000/api/contacts/${contactToDelete._id}`);
+      await axios.delete(`${API_BASE}/api/contacts/${contactToDelete._id}`);
       const updatedContacts = contacts.filter((_, i) => i !== index);
       setContacts(updatedContacts);
       toast.info('Emergency contact deleted successfully!');
@@ -182,7 +183,6 @@ const EmergencyContactManagement = () => {
           <button className="btn" type="submit">
             {editContactIndex === null ? 'Add Contact' : 'Update Contact'}
           </button>
-
         </form>
 
         <input
@@ -235,43 +235,43 @@ const EmergencyContactManagement = () => {
       </div>
 
       <Modal
-  isOpen={modalIsOpen}
-  onRequestClose={closeModal}
-  className="Modal"
-  overlayClassName="ReactModal__Overlay" 
->
-  <h2>{editContactIndex !== null ? 'Edit Contact' : 'Add Contact'}</h2>
-  <form onSubmit={contactFormik.handleSubmit}>
-    <input
-      type="text"
-      name="name"
-      placeholder="Name"
-      value={contactFormik.values.name}
-      onChange={contactFormik.handleChange}
-      onBlur={contactFormik.handleBlur}
-    />
-    <input
-      type="tel"
-      name="phone"
-      placeholder="Phone Number"
-      value={contactFormik.values.phone}
-      onChange={contactFormik.handleChange}
-      onBlur={contactFormik.handleBlur}
-    />
-    <input
-      type="text"
-      name="relation"
-      placeholder="Relation"
-      value={contactFormik.values.relation}
-      onChange={contactFormik.handleChange}
-      onBlur={contactFormik.handleBlur}
-    />
-    <button type="submit">
-      {editContactIndex !== null ? 'Update' : 'Add'}
-    </button>
-  </form>
-  <button onClick={closeModal}>Close</button>
-</Modal>
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        className="Modal"
+        overlayClassName="ReactModal__Overlay" 
+      >
+        <h2>{editContactIndex !== null ? 'Edit Contact' : 'Add Contact'}</h2>
+        <form onSubmit={contactFormik.handleSubmit}>
+          <input
+            type="text"
+            name="name"
+            placeholder="Name"
+            value={contactFormik.values.name}
+            onChange={contactFormik.handleChange}
+            onBlur={contactFormik.handleBlur}
+          />
+          <input
+            type="tel"
+            name="phone"
+            placeholder="Phone Number"
+            value={contactFormik.values.phone}
+            onChange={contactFormik.handleChange}
+            onBlur={contactFormik.handleBlur}
+          />
+          <input
+            type="text"
+            name="relation"
+            placeholder="Relation"
+            value={contactFormik.values.relation}
+            onChange={contactFormik.handleChange}
+            onBlur={contactFormik.handleBlur}
+          />
+          <button type="submit">
+            {editContactIndex !== null ? 'Update' : 'Add'}
+          </button>
+        </form>
+        <button onClick={closeModal}>Close</button>
+      </Modal>
     </div>
   );
 };

@@ -7,6 +7,7 @@ import {
 	FaRegComment,
 	FaUserCircle
 } from 'react-icons/fa';
+import { API_BASE } from '../../services/apiService';
 
 const CommunityStories = () => {
 	const [incidents, setIncidents] = useState([]);
@@ -21,7 +22,7 @@ const CommunityStories = () => {
 	const fetchIncidents = useCallback(async () => {
 		try {
 			const response = await axios.get(
-				`http://localhost:3000/api/incidents?page=${page}&limit=10`
+				`${API_BASE}/api/incidents?page=${page}&limit=10`
 			);
 			if (response.data.length === 0) {
 				setHasMore(false);
@@ -56,7 +57,7 @@ const CommunityStories = () => {
 	const handleLike = async id => {
 		try {
 			const isLiked = likes[id] === true;
-			await axios.put(`http://localhost:3000/api/incidents/${id}/like`, {
+			await axios.put(`${API_BASE}/api/incidents/${id}/like`, {
 				like: !isLiked
 			});
 			setLikes(prevLikes => ({
@@ -77,7 +78,7 @@ const CommunityStories = () => {
 		if (newComment.trim() === '') return;
 		try {
 			await axios.post(
-				`http://localhost:3000/api/incidents/${id}/comment`,
+				`${API_BASE}/api/incidents/${id}/comment`,
 				{ text: newComment }
 			);
 			setComments(prevComments => ({

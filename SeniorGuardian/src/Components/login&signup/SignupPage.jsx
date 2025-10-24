@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './SignupPage.css'; 
 import { FaUser, FaLock, FaPhoneAlt, FaRegBuilding } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { registerUser } from '../../services/apiService';
 
 const SignUpPage = () => {
 	const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ const SignUpPage = () => {
 		password: ''
 	});
 	const [errorMessage, setErrorMessage] = useState('');
+	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
 
 	const handleChange = e => {
@@ -27,21 +29,21 @@ const SignUpPage = () => {
 
 	const handleSignUp = async e => {
 		e.preventDefault();
+		setErrorMessage('');
+		setLoading(true);
 
 		try {
-			const response = await fetch('http://localhost:3000/api/register', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(formData)
-			});
-			const data = await response.json();
-			if (response.ok) {
-				navigate('/');
+			const data = await registerUser(formData);
+			if (data && !data.message) {
+				navigate('/login'); // redirect to login after successful signup
 			} else {
 				setErrorMessage(data.message || 'Registration failed');
 			}
 		} catch (error) {
 			setErrorMessage('Error occurred during sign up');
+			console.error(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -139,16 +141,14 @@ const SignUpPage = () => {
 						/>
 					</div>
 
-					<button type="submit" className="submit-btn">
-						Sign Up
+					<button type="submit" className="submit-btn" disabled={loading}>
+						{loading ? 'Signing Up...' : 'Sign Up'}
 					</button>
 				</form>
-				{errorMessage && (
-					<p className="error-message">{errorMessage}</p>
-				)}
+				{errorMessage && <p className="error-message">{errorMessage}</p>}
 				<p className="already-account">
 					Already have an account?{' '}
-					<span onClick={() => navigate('/')} className="login-link">
+					<span onClick={() => navigate('/login')} className="login-link">
 						Login
 					</span>
 				</p>

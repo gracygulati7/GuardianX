@@ -2,30 +2,33 @@ import React, { useState } from 'react';
 import './LoginPage.css';
 import { FaLock, FaUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { loginUser } from '../../services/apiService';
 
 const LoginPage = () => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [errorMessage, setErrorMessage] = useState('');
+	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
 
 	const handleLogin = async e => {
 		e.preventDefault();
+		setErrorMessage('');
+		setLoading(true);
+
 		try {
-			const response = await fetch('http://localhost:3000/api/login', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ email, password })
-			});
-			const data = await response.json();
-			if (response.ok) {
+			const data = await loginUser(email, password);
+			if (data && data.token) {
 				localStorage.setItem('token', data.token);
-				navigate('/home');
+				navigate('/home'); // redirect to home page after login
 			} else {
 				setErrorMessage(data.message || 'Login failed');
 			}
 		} catch (error) {
 			setErrorMessage('Error occurred during login');
+			console.error(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -58,18 +61,17 @@ const LoginPage = () => {
 							required
 						/>
 					</div>
-					<button type="submit" className="submit-btn">
-						Login
+					<button type="submit" className="submit-btn" disabled={loading}>
+						{loading ? 'Logging In...' : 'Login'}
 					</button>
 				</form>
-				{errorMessage && (
-					<p className="error-message">{errorMessage}</p>
-				)}
-
+				{errorMessage && <p className="error-message">{errorMessage}</p>}
 				<div className="signup-redirect">
 					<p>
 						Don't have an account?{' '}
-						<span onClick={handleSignUpRedirect}>Sign Up</span>
+						<span onClick={handleSignUpRedirect} className="signup-link">
+							Sign Up
+						</span>
 					</p>
 				</div>
 			</div>
