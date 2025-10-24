@@ -17,7 +17,7 @@ const LoginPage = () => {
 		setLoading(true);
 
 		try {
-			const data = await loginUser(email, password);
+			const data = await loginUser({ email, password });
 			if (data && data.token) {
 				localStorage.setItem('token', data.token);
 				navigate('/home'); // redirect to home page after login
@@ -80,3 +80,4 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
