@@ -8,13 +8,13 @@ require("dotenv").config();
 
 const bodyParser = require('body-parser');
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(
 	cors({
-		origin: 'https://guardianx-eixl3c0ac-gracy-gulatis-projects.vercel.app',
+		origin: 'https://guardianx-iota.vercel.app',
 		methods: ['GET', 'POST', 'PUT', 'DELETE']
 	})
 );
@@ -292,6 +292,4 @@ app.put('/api/contacts/:id', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-	console.log(`Server is running on ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
