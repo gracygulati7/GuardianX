@@ -20,18 +20,18 @@ app.use(bodyParser.json());
 // 	})
 // );
 
-// CORS setup
-app.use(
-  cors({
-    origin: 'https://guardianx-iota.vercel.app', // your frontend deployed URL
-    methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-    allowedHeaders: ['Content-Type','Authorization'],
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: 'https://guardianx-iota.vercel.app',
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization'],
+  credentials: true
+};
 
-// Handle preflight requests for all routes
-app.options('*', cors());
+app.use(cors(corsOptions));
+
+// Make sure OPTIONS requests also use the same corsOptions
+app.options('*', cors(corsOptions));
+
 
 mongoose
   .connect(process.env.MONGO_URI)
