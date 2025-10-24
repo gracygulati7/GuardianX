@@ -33,7 +33,10 @@ export const registerUser = async (userData) => {
 
 export const loginUser = async (credentials) => {
   try {
-    const response = await api.post('/api/login', credentials);
+    const response = await axios.post(`${API_BASE}/api/login`, credentials, {
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true
+    });
     return response.data;
   } catch (error) {
     console.error('Error logging in:', error.response?.data || error.message);
@@ -204,3 +207,4 @@ export const deleteContact = async (id) => {
     throw error;
   }
 };
+
