@@ -20,17 +20,18 @@ app.use(bodyParser.json());
 // 	})
 // );
 
-const corsOptions = {
-  origin: 'https://guardianx-iota.vercel.app',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-};
+// CORS setup
+app.use(
+  cors({
+    origin: 'https://guardianx-iota.vercel.app', // your frontend deployed URL
+    methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+    allowedHeaders: ['Content-Type','Authorization'],
+    credentials: true,
+  })
+);
 
-app.use(cors(corsOptions));
-
-// Handle preflight OPTIONS requests
-app.options('*', cors(corsOptions));
+// Handle preflight requests for all routes
+app.options('*', cors());
 
 mongoose
   .connect(process.env.MONGO_URI)
